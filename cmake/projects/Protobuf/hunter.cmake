@@ -149,9 +149,27 @@ hunter_add_version(
     490beb456fb6934bd4d9f6012c601f6724c2f757
 )
 
+hunter_add_version(
+    PACKAGE_NAME
+    Protobuf
+    VERSION
+    "3.11.4-untainted"
+    URL
+    "https://github.com/protocolbuffers/protobuf/releases/download/v3.11.4/protobuf-cpp-3.11.4.tar.gz"
+    SHA1
+    6d3499a30468a9264e81494ba58feccf1aa87108
+)
+
 string(
     COMPARE EQUAL "${CMAKE_SYSTEM_NAME}" "WindowsStore" _hunter_windows_store
 )
+
+hunter_add_package(ZLIB)
+find_package(ZLIB CONFIG REQUIRED)
+
+list(APPEND COMMON_ARGS "protobuf_BUILD_TESTS=OFF")
+list(APPEND COMMON_ARGS "CMAKE_PREFIX_PATH=${ZLIB_ROOT}")
+list(APPEND COMMON_ARGS "ZLIB_DIR=${ZLIB_ROOT}/lib/cmake/ZLIB")
 
 if(ANDROID OR IOS)
   hunter_cmake_args(
@@ -182,6 +200,10 @@ else()
       CMAKE_ARGS
         protobuf_BUILD_TESTS=OFF
   )
+endif()
+
+if(HUNTER_Protobuf_VERSION EQUAL 3.11.4-untainted)
+    hunter_source_subdir(Protobuf SOURCE_SUBDIR "cmake")
 endif()
 
 hunter_pick_scheme(DEFAULT url_sha1_cmake)
